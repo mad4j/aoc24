@@ -4,12 +4,12 @@ use std::iter::zip;
 use std::path::Path;
 
 
-fn compute_distance(l1: &Vec<i32>, l2: &Vec<i32>) -> u32 {
+fn compute_distance(l1: &Vec<u32>, l2: &Vec<u32>) -> u32 {
     zip(l1, l2).map(|(x, y)| x.abs_diff(*y)).sum()
 }
 
-fn compute_similarity(l1: &Vec<i32>, l2: &Vec<i32>) -> i32 {
-    l1.iter().map(|x| x * l2.iter().filter(|y| *y==x).count() as i32).sum()
+fn compute_similarity(l1: &Vec<u32>, l2: &Vec<u32>) -> u32 {
+    l1.iter().map(|x| x * l2.iter().filter(|y| *y==x).count() as u32).sum()
 }
 
 fn main() -> io::Result<()> {
@@ -22,14 +22,14 @@ fn main() -> io::Result<()> {
     let reader = io::BufReader::new(file);
 
     // Liste per memorizzare i numeri
-    let mut l1 = Vec::new();
-    let mut l2 = Vec::new();
+    let mut l1 = Vec::<u32>::new();
+    let mut l2 = Vec::<u32>::new();
 
     // Leggi il file riga per riga
     for line in reader.lines() {
         let line = line?;
         // Dividi la riga in due numeri
-        let numbers: Vec<i32> = line.split_whitespace()
+        let numbers: Vec<u32> = line.split_whitespace()
                                     .map(|s| s.parse().expect("Parse error"))
                                     .collect();
         // Aggiungi i numeri alle rispettive liste
