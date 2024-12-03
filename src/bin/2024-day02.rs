@@ -41,7 +41,6 @@ impl Check for Vec<u32> {
     }
 
     fn check_multiple(&self) -> bool {
-        //remove_each_element(self).iter().any(|v| check_multiple(v)).then_some(self)
         remove_each_element(self).iter().any(|v| v.check_single())
     }
 }
@@ -56,6 +55,7 @@ fn solve_part1(input: &str) -> u32 {
 }
 
 fn solve_part2(input: &str) -> u32 {
+    // maybe filter_map() more concise?
     input
         .lines()
         .map(|l| parse_values(l))
