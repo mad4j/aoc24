@@ -68,12 +68,13 @@ fn remove_each_element(vec: &Vec<u32>) -> Vec<Vec<u32>> {
     result
 }
 
-fn check_single(vec: &Vec<u32>) -> bool {
-    is_strictly_ordered(&vec) && max_adjacent_difference(&vec) <= 3
+/*
+fn check_single(vec: &Vec<u32>) -> Option<&Vec<u32>> {
+    (is_strictly_ordered(&vec) && max_adjacent_difference(&vec) <= 3).then_some(vec)
 }
 
-fn check_multiple(vec: &Vec<u32>) -> bool {
-    remove_each_element(vec).iter().any(|v| check_single(v))
+fn check_multiple(vec: &Vec<u32>) -> Option<&Vec<u32>> {
+    remove_each_element(vec).iter().any(|v| check_single(v)).then_some(vec)
     /*
     for v in remove_each_element(vec) {
         if is_strictly_ordered(&v) && max_adjacent_difference(&v) <= 3 {
@@ -84,40 +85,40 @@ fn check_multiple(vec: &Vec<u32>) -> bool {
     return false;
     */
 }
+*/
 
 trait Check {
-    fn check_single(&self) -> Option<&Self>;
-    fn check_multiple(&self) -> Option<&Self>;
+    fn check_single(&self) -> bool;
+    fn check_multiple(&self) -> bool;
+}
+
+impl Check for Vec<u32> {
+    fn check_single(&self) -> bool {
+        is_strictly_ordered(self) && max_adjacent_difference(self) <= 3
+    }
+
+    fn check_multiple(&self) -> bool {
+        //remove_each_element(self).iter().any(|v| check_multiple(v)).then_some(self)
+        remove_each_element(self)
+            .iter()
+            .any(|v| v.check_single())
+    }
 }
 
 fn solve_part1(input: &str) -> u32 {
-
     // maybe filter_map() more concise?
     input
         .lines()
         .map(|l| parse_values(l))
-        .filter(|v| check_single(v))
+        .filter(|v| v.check_single())
         .count() as u32
-    /*
-        let mut result = 0;
-
-        for line in input.lines() {
-            let v = parse_values(line);
-
-            if is_strictly_ordered(&v) && max_adjacent_difference(&v) <= 3 {
-                result += 1;
-            }
-        }
-
-        result
-    */
 }
 
 fn solve_part2(input: &str) -> u32 {
     input
         .lines()
         .map(|l| parse_values(l))
-        .filter(|v| check_multiple(v))
+        .filter(|v| v.check_multiple())
         .count() as u32
 }
 
@@ -139,18 +140,18 @@ mod tests {
     #[test]
     fn test01() {
         let v = vec![1, 3, 2, 4, 5];
-        assert_eq!(check_multiple(&v), true);
+        assert_eq!(v.check_multiple(), true);
     }
 
     #[test]
     fn test02() {
         let v = vec![8, 6, 4, 4, 1];
-        assert_eq!(check_multiple(&v), true);
+        assert_eq!(v.check_multiple(), true);
     }
 
     #[test]
     fn test03() {
         let v = vec![71, 74, 73, 76, 82];
-        assert_eq!(check_multiple(&v), false);
+        assert_eq!(v.check_multiple(), false);
     }
 }
